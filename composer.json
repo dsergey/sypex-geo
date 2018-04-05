@@ -1,0 +1,26 @@
+{
+    "name": "dsergey/sypex-geo",
+    "description": "SypexGeo composer package",
+    "type": "library",
+    "keywords": ["sypexgeo","geo","geolocation","geoip"],
+    "license": "BSD-2-Clause",
+    "authors": [
+        {
+            "name": "zapimir",
+            "email": "zapimir@zapimir.net"
+        },
+        {
+            "name": "BINOVATOR",
+            "email": "info@sypex.net"
+        },
+        {
+            "name": "sergey",
+            "email": "serik.drozd@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "\\": "src/"
+        }
+    }
+}
