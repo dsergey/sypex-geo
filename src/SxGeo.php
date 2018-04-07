@@ -1,7 +1,7 @@
 <?php
 
 /***************************************************************************\
-| Sypex Geo                  version 2.2.3                                  |
+| Sypex Geo                  version 2.2.3.1 patched with exceptions        |
 | (c)2006-2014 zapimir       zapimir@zapimir.net       http://sypex.net/    |
 | (c)2006-2014 BINOVATOR     info@sypex.net                                 |
 |---------------------------------------------------------------------------|
@@ -10,10 +10,12 @@
 | Sypex Geo is released under the terms of the BSD license                  |
 |   http://sypex.net/bsd_license.txt                                        |
 \***************************************************************************/
-
 define ('SXGEO_FILE', 0);
 define ('SXGEO_MEMORY', 1);
 define ('SXGEO_BATCH',  2);
+
+class SxGeoDatabaseException extends Exception {}
+
 class SxGeo {
 	protected $fh;
 	protected $ip1c;
@@ -57,10 +59,14 @@ class SxGeo {
 		$this->fh = fopen($db_file, 'rb');
 		// Сначала убеждаемся, что есть файл базы данных
 		$header = fread($this->fh, 40); // В версии 2.2 заголовок увеличился на 8 байт
-		if(substr($header, 0, 3) != 'SxG') die("Can't open {$db_file}\n");
+		if(substr($header, 0, 3) != 'SxG') {
+            throw new SxGeoDatabaseException("Can't open {$db_file}");
+        }
 		$info = unpack('Cver/Ntime/Ctype/Ccharset/Cb_idx_len/nm_idx_len/nrange/Ndb_items/Cid_len/nmax_region/nmax_city/Nregion_size/Ncity_size/nmax_country/Ncountry_size/npack_size', substr($header, 3));
-		if($info['b_idx_len'] * $info['m_idx_len'] * $info['range'] * $info['db_items'] * $info['time'] * $info['id_len'] == 0) die("Wrong file format {$db_file}\n");
-		$this->range       = $info['range'];
+		if($info['b_idx_len'] * $info['m_idx_len'] * $info['range'] * $info['db_items'] * $info['time'] * $info['id_len'] == 0) {
+            throw new SxGeoDatabaseException("Wrong file format {$db_file}");
+        }
+        $this->range       = $info['range'];
 		$this->b_idx_len   = $info['b_idx_len'];
 		$this->m_idx_len   = $info['m_idx_len'];
 		$this->db_items    = $info['db_items'];
